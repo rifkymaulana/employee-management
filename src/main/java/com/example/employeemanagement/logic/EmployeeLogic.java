@@ -1,10 +1,12 @@
 package com.example.employeemanagement.logic;
 
+import com.example.employeemanagement.dto.employee.CreateEmployeeDTO;
 import com.example.employeemanagement.entity.Employee;
 import com.example.employeemanagement.model.ResponseModel;
 import com.example.employeemanagement.service.EmployeeService;
 import com.example.employeemanagement.util.ResponseUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,6 +38,10 @@ public class EmployeeLogic {
         try {
             Employee employee = employeeService.findById(id).orElse(null);
 
+            if (employee == null) {
+                return responseUtil.error("Employee not found", HttpStatus.NOT_FOUND);
+            }
+
             return responseUtil.success(employee);
         } catch (Exception exception) {
             log.error("Error occurred while fetching employee by id: {}", exception.getMessage(), exception);
@@ -43,8 +49,12 @@ public class EmployeeLogic {
         }
     }
 
-    public ResponseModel save(Employee employee) {
+    public ResponseModel create(CreateEmployeeDTO requestBody) {
         try {
+            Employee employee = new Employee();
+
+            employee = employee.getEmployee(requestBody);
+
             Employee savedEmployee = employeeService.save(employee);
 
             return responseUtil.success(savedEmployee);
