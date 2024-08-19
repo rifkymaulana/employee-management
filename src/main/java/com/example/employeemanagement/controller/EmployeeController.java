@@ -31,8 +31,12 @@ public class EmployeeController {
     }
 
     @GetMapping("/findAll")
-    public ResponseEntity<ResponseModel> findAll() {
+    public ResponseEntity<ResponseModel> findAll(
+            @RequestHeader Map<String, String> headers
+    ) {
         try {
+            loggingUtil.startController("EmployeeController", "findAll", headers, null);
+
             ResponseModel response = employeeLogic.findAll();
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception exception) {
@@ -56,7 +60,7 @@ public class EmployeeController {
 
     @PostMapping("/create")
     public ResponseEntity<ResponseModel> create(
-            @RequestHeader Map<String, Object> headers,
+            @RequestHeader Map<String, String> headers,
             @Valid @RequestBody CreateEmployeeDTO requestBody
     ) {
         try {
@@ -66,7 +70,7 @@ public class EmployeeController {
 
             return ResponseEntity.status(HttpStatus.OK).body(response);
         } catch (Exception exception) {
-            log.error("Error occurred while saving employee: {}", exception.getMessage(), exception);
+            log.error("Error occurred while create employee: {}", exception.getMessage(), exception);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(responseUtil.error(exception.getMessage()));
         }

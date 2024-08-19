@@ -17,11 +17,11 @@ public class EmployeeService {
     }
 
     public List<Employee> findAll() {
-        return employeeRepository.findAll();
+        return employeeRepository.findAll().stream().filter(employee -> !employee.getIsDeleted()).toList();
     }
 
     public Optional<Employee> findById(Long id) {
-        return employeeRepository.findById(id);
+        return employeeRepository.findById(id).stream().filter(employee -> !employee.getIsDeleted()).findFirst();
     }
 
     public Employee save(Employee employee) {

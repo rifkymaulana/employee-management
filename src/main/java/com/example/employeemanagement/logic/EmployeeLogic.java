@@ -59,7 +59,7 @@ public class EmployeeLogic {
 
             return responseUtil.success(savedEmployee);
         } catch (Exception exception) {
-            log.error("Error occurred while saving employee: {}", exception.getMessage(), exception);
+            log.error("Error occurred while create employee: {}", exception.getMessage(), exception);
             return responseUtil.error(exception.getMessage());
         }
     }
@@ -77,9 +77,17 @@ public class EmployeeLogic {
 
     public ResponseModel delete(Long id) {
         try {
-            employeeService.delete(id);
+            Employee employee = employeeService.findById(id).orElse(null);
 
-            return responseUtil.success("Employee deleted successfully");
+            if (employee == null) {
+                return responseUtil.error("Employee not found", HttpStatus.NOT_FOUND);
+            } else {
+                employee.setIsDeleted(true);
+            }
+
+            Employee updatedEmployee = employeeService.update(employee);
+
+            return responseUtil.success(updatedEmployee);
         } catch (Exception exception) {
             log.error("Error occurred while deleting employee: {}", exception.getMessage(), exception);
             return responseUtil.error(exception.getMessage());

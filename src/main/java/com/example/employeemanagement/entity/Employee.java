@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
@@ -60,18 +62,29 @@ public class Employee {
     }
 
     public Employee getEmployee(CreateEmployeeDTO requestBody) {
+        try {
+            Date birthDate = new SimpleDateFormat("dd/MM/yyyy").parse(requestBody.getBirthDate());
+            Date hireDate = new SimpleDateFormat("dd/MM/yyyy").parse(requestBody.getHireDate());
+
+            return getEmployee(requestBody, birthDate, hireDate);
+        } catch (ParseException exception) {
+            System.out.println("Error occurred while parsing date: " + exception.getMessage());
+            return null;
+        }
+    }
+
+    private Employee getEmployee(CreateEmployeeDTO requestBody, Date birthDate, Date hireDate) {
         Employee employee = new Employee();
 
         employee.setNik(requestBody.getNik());
         employee.setFirstName(requestBody.getFirstName());
         employee.setLastName(requestBody.getLastName());
-        employee.setBirthDate(requestBody.getBirthDate());
+        employee.setBirthDate(birthDate);
         employee.setGender(requestBody.getGender());
-        employee.setHireDate(requestBody.getHireDate());
+        employee.setHireDate(hireDate);
         employee.setEmail(requestBody.getEmail());
         employee.setPhoneNumber(requestBody.getPhoneNumber());
         employee.setCreatedBy(requestBody.getCreatedBy());
-
         return employee;
     }
 }
